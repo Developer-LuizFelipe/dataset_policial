@@ -7,7 +7,7 @@ import seaborn as sns
 
 st.set_page_config(page_title='Análise  das Ocorencias na cidade do rio de Janeiro ', layout='wide')
 
-df = pd.read_csv('BO_2013_1.CSV')
+df = pd.read_csv('BO_2013_1.csv')
 
 # Metricas 
 df_final=df[['NOME_DEPARTAMENTO','ANO','MES','RUBRICA','CONDUTA','SEXO_PESSOA','COR','DESCR_GRAU_INSTRUCAO']]
@@ -29,50 +29,81 @@ ano = st.sidebar.multiselect(
 mes = st.sidebar.multiselect(
     "Selecione o mês:",
     options=df_final['MES'].unique(),
-    default=df_final['MES'].unique()
+    default=[]
 )
 rubrica = st.sidebar.multiselect(
     "Selecione a rubrica:",
      options=df_final['RUBRICA'].unique(),
-     default=df_final['RUBRICA'].unique()
+     default=[]
 )
 
 conduta = st.sidebar.multiselect(
     "Selecione a conduta:",
     options=df_final['CONDUTA'].unique(),
-    default=df_final['CONDUTA'].unique()    
+    default=[]  
 )
 
 sexo = st.sidebar.multiselect(
     "Selecione o sexo:",
     options=df_final['SEXO_PESSOA'].unique(),
-    default=df_final['SEXO_PESSOA'].unique()
+    default=[]
 )
 cor = st.sidebar.multiselect(
     "Selecione a cor:",
     options=df_final['COR'].unique(),
-    default=df_final['COR'].unique()
+    default=[]
 )
 
 grau = st.sidebar.multiselect(
     "Selecione o grau de instrução:",
     options=df_final['DESCR_GRAU_INSTRUCAO'].unique(),
-    default=df_final['DESCR_GRAU_INSTRUCAO'].unique()
+    default=[]
 )
 
 departamento = st.sidebar.multiselect(
     "Selecione o departamento:",
     options=df_final['NOME_DEPARTAMENTO'].unique(),
-    default=df_final['NOME_DEPARTAMENTO'].unique()
+    default=[]
 )
 
 
+query_expression = "ANO == @ano"
 
-df_selection = df_final.query(
-    "ANO == @ano & MES == @mes & RUBRICA == @rubrica & CONDUTA == @conduta & SEXO_PESSOA == @sexo & COR == @cor & DESCR_GRAU_INSTRUCAO == @grau & NOME_DEPARTAMENTO == @departamento"
-)
+# df_selection = df_final.query(
+#     "ANO == @ano & MES == @mes & RUBRICA == @rubrica & CONDUTA == @conduta & SEXO_PESSOA == @sexo & COR == @cor & DESCR_GRAU_INSTRUCAO == @grau & NOME_DEPARTAMENTO == @departamento"
+# )
 
+# if not departamento:
+#     df_selection = df_final.query(
+#         "ANO == @ano & MES == @mes & RUBRICA == @rubrica & CONDUTA == @conduta & SEXO_PESSOA == @sexo & COR == @cor & DESCR_GRAU_INSTRUCAO == @grau"
+#     )
+    
+# if not grau:
+#     df_selection = df_final.query(
+#         "ANO == @ano & MES == @mes & RUBRICA == @rubrica & CONDUTA == @conduta & SEXO_PESSOA == @sexo & COR == @cor & NOME_DEPARTAMENTO == @departamento"
+#     )
 
+# if (not grau) and (not departamento):
+#     df_selection = df_final.query(
+#         "ANO == @ano & MES == @mes & RUBRICA == @rubrica & CONDUTA == @conduta & SEXO_PESSOA == @sexo & COR == @cor"
+#     )
+
+if mes:
+    query_expression += f" & MES == @mes"
+if rubrica:
+    query_expression += f" & RUBRICA == @rubrica"
+if conduta:
+    query_expression += f" & CONDUTA == @conduta"
+if sexo:
+    query_expression += f" & SEXO_PESSOA == @sexo"
+if cor:
+    query_expression += f" & COR == @cor"
+if grau:
+    query_expression += f" & DESCR_GRAU_INSTRUCAO == @grau"
+if departamento:
+    query_expression += f" & NOME_DEPARTAMENTO == @departamento"
+
+df_selection = df_final.query(query_expression)
 
 
 # Abas 
@@ -98,23 +129,23 @@ st.pyplot(fig)
 
 
 
-# # criar grafico de barras
-# st.header('Gráfico de barras empilhadas')
+# criar grafico de barras
+st.header('Gráfico de barras empilhadas')
 
 
-# # criar grafico de barras empilhadas
-# fig, ax = plt.subplots(figsize=(10, 5))
-# sns.countplot(x='MES', hue='RUBRICA', data=df_final)
-# st.pyplot(fig)
+# criar grafico de barras empilhadas
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.countplot(x='MES', hue='RUBRICA', data=df_final)
+st.pyplot(fig)
 
-# # criar grafico de barras
-# st.header('Gráfico de barras horizontais')
+# criar grafico de barras
+st.header('Gráfico de barras horizontais')
 
 
-# # criar grafico de barras horizontais
-# fig, ax = plt.subplots(figsize=(10, 5))
-# sns.countplot(y='RUBRICA', data=df_final)
-# plt.xticks(rotation=90)
-# st.pyplot(fig)
+# criar grafico de barras horizontais
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.countplot(y='RUBRICA', data=df_final)
+plt.xticks(rotation=90)
+st.pyplot(fig)
 
 
